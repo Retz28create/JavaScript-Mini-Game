@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Play or Not — Pixel Blobs</title>
+
+<style>
+:root{
+  --bg:#0f1724;
+  --muted:#94a3b8;
+  --eye:#05202a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#e6eef8;
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('totoro.jpg');
+  background-size: cover;         /* make it cover whole screen */
+  background-position: center;    /* center it */
+  background-repeat: no-repeat;   /* no tiling */
+  background-attachment: fixed;   /* optional: stays fixed when scrolling */
+  overflow:hidden;
+}
+
+
+/*yoko na*/
+.exit {
+  position: fixed;
+  right: 400px;
+  bottom: 15%;
+  z-index: 50;
+}
+
+.btn-avoid {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(255, 100, 100, 0.2));
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  padding: 20px 24px;
+  border-radius: 40px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  font-weight: 600;
+  transition: 0.18s;
+  box-shadow: 0 9px 29px rgba(2, 6, 23, 0.6);
+}
+
+.btn-avoid:hover {
+  transform: translateY(-3px) scale(1.02);
+  color: #fff;
+  border-color: rgba(125, 211, 252, 0.18);
+}
+
+#blockedScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.blockedText {
+  font-size: 48px;
+  color: #000;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+/* GAMES*/
+.games-right{
+  position:fixed;right:200px;top:50%;transform:translateY(-50%);
+  display:flex;gap:40px;z-index:20
+}
+.game-card{
+  width:300px;height:350px;border-radius:18px;padding:18px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background: linear-gradient(180deg, rgba(100,149,237,0.4), rgba(30,144,255,0.03));
+  border:1px solid rgba(255,255,255,.03);
+  box-shadow:0 20px 40px rgba(2,6,23,.7);
+  transition:.2s;text-decoration: none;
+}
+.game-card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(2,6,23,.85)}
+.game-card a {
+  text-decoration: none;
+  color: inherit;
+}
+.game-art{font-size:60px;margin-bottom:14px}
+
+.game-title {
+  font-weight: 800;              
+  font-size: 28px;               
+  color: #e0f7ff;             
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5); 
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif; 
+}
+
+.game-sub {
+  color: #cceeff;               
+  font-size: 18px;              
+  text-align: center;
+  line-height: 1.4;
+  font-family: 'Roboto', sans-serif;
+}
+
+
+
+
+
+/* text */
+.title-container {
+  text-align: center;
+  margin: 20px auto;
+  padding: 10px 20px;
+ background:transparent;border:2px solid rgba(255,255,255,0.06);
+  color:var(--muted);padding:10px 14px;border-radius:10px;cursor:pointer;
+  backdrop-filter:blur(6px);font-weight:600;transition:.18s;
+  box-shadow:0 9px 29px rgba(2,6,23,0.6)
+}
+
+.title-text {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.title-marquee {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+}
+
+/* WWWHHYYYYY */
+#angryText{
+  position:absolute;top:200px;left:20%;transform:translateX(-50%);
+  font-size:48px;font-weight:bold;color:red;display:none;z-index:50;
+}
+
+
+
+
+
+
+
+/* DA BLOB */
+.blob{
+  position:absolute;
+  border-radius:60px 60px 15px 15px;
+  border:4px solid rgba(0,0,0,.2);
+  display:flex;justify-content:center;align-items:center;
+  transition:transform .2s ease;
+}
+
+/* BLOB CLOR & SIZE */
+/* Blob 1 - green gradient */
+.blob1 {
+  width: 130px;
+  height: 90px;
+  z-index: 3;
+  border: 4px solid #23c07b; /* outline */
+  border-radius: 60px 60px 15px 15px;
+
+  /* Gradient background */
+  background: linear-gradient(135deg, #23c07b, #43e58f);
+
+  /* Fade the bottom */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+/* Blob 2 - yellow gradient */
+.blob2 {
+  width: 160px;
+  height: 200px;
+  z-index: 1;
+  border: 4px solid #ffb74d; /* outline */
+  border-radius: 60px 60px 15px 15px;
+
+  background: linear-gradient(135deg, #ffb74d, #ffe066);
+
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+/* Blob 3 - blue gradient */
+.blob3 {
+  width: 120px;
+  height: 80px;
+  z-index: 2;
+  border: 4px solid #7dd3fc; /* outline */
+  border-radius: 60px 60px 15px 15px;
+
+  background: linear-gradient(135deg, #7dd3fc, #3aa0f2);
+
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+
+
+
+
+/* MATA MO */
+.eye-svg{width:40px;height:40px;position:absolute;top:20px;transition:.2s}
+
+.blob1 .eye-svg.left{left:20px} .blob1 .eye-svg.right{right:20px}
+.blob2 .eye-svg.left{left:36px} .blob2 .eye-svg.right{right:36px}
+.blob3 .eye-svg.left{left:15px} .blob3 .eye-svg.right{right:20px}
+
+
+/* SMILE HEHE */
+.blob.smile .mouth{
+  position:absolute;top:50px;left:55%;transform:translateX(-50%);
+  width:14px;height:8px;background:var(--eye);opacity:1;
+  border-radius:0 0 50% 50%;
+}
+
+
+
+/* BEAST mode */
+.blob.angry{background:#f33 !important}
+.blob.angry .eye-svg circle{fill:#200}
+.blob.angry .eye-svg{transform:rotate(20deg)}
+.blob.angry .mouth{
+  position:absolute;top:50px;left:55%;transform:translateX(-50%);
+  width:16px;height:6px;background:#200;opacity:1;border-radius:2px;
+}
+
+
+
+
+
+
+/* audio */
+ #audioBtn {
+     position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  color: #fff;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+ }
+ 
+ 
+ 
+
+#rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* So it doesn't block clicks */
+  overflow: hidden;
+  z-index: 1; /* behind blobs but above background */
+}
+
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: rgba(173, 216, 230, 0.6);
+  top: -20px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(173, 216, 230, 0.5);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+  
+</style>
+</head>
+
+
+
+
+
+
+
+
+
+<body>
+<div class="page">
+
+  <div id="rain"></div>
+  
+  <div class="exit">
+  <button id="avoidBtn" class="btn-avoid">I don't want to use any of these</button>
+</div>
+
+<div id="blockedScreen">
+  <div class="blockedText">Fine 😒, enjoy nothing!</div>
+</div>
+  
+   <div class="title-container">
+  <div class="title-text">Welcome to Our JavaScript Blob Zone</div>
+  <marquee class="title-marquee">Click first & Don’t touch the blobs, they don’t like it!</marquee>
+</div>
+
+  <div class="games-right">
+    <a id="calcCard" class="game-card" href="calculator.html" target="_blank">
+      <div class="game-art">🧮</div>
+      <div class="game-title">Calculator</div>
+      <div class="game-sub">Its a calculator 😃........ it do calculator things</div>
+    </a>
+
+    <a id="memCard" class="game-card" href="memory game.html" target="_blank">
+      <div class="game-art">🧠</div>
+      <div class="game-title">Memory Card Game</div>
+      <div class="game-sub">How sharp is your brain Match the cards</div>
+    </a>
+  </div>
+
+  <div id="angryText">WHY!</div>
+
+  <!-- BLOBS -->
+  <div id="blobs">
+    <div class="blob blob1">
+      <svg class="eye-svg left" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <svg class="eye-svg right" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <div class="mouth"></div>
+    </div>
+
+    <div class="blob blob2">
+      <svg class="eye-svg left" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <svg class="eye-svg right" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <div class="mouth"></div>
+    </div>
+
+    <div class="blob blob3">
+      <svg class="eye-svg left" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <svg class="eye-svg right" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#05202a"/></svg>
+      <div class="mouth"></div>
+    </div>
+  </div>
+  
+ <button id="audioBtn">🔇 Music Off</button>
+
+
+</div>
+
+
+
+
+
+<script>
+// --------------------
+// Background music
+// --------------------
+const bgAudio = new Audio("totoro.mp3"); 
+bgAudio.loop = true;
+bgAudio.volume = 0.3;
+
+const audioBtn = document.getElementById("audioBtn");
+let musicPlaying = false; // start OFF
+
+audioBtn.addEventListener("click", () => {
+    if (musicPlaying) {
+        bgAudio.pause();
+        audioBtn.textContent = "🔇 Music Off";
+        musicPlaying = false;
+    } else {
+        bgAudio.play().catch(()=>{}); // play on click
+        audioBtn.textContent = "🔊 Music On";
+        musicPlaying = true;
+    }
+});
+
+
+
+//rain
+const rainContainer = document.getElementById('rain');
+const numberOfDrops = 30; // lighter rain
+
+for (let i = 0; i < numberOfDrops; i++) {
+    const drop = document.createElement('div');
+    drop.classList.add('raindrop');
+
+    drop.style.left = Math.random() * window.innerWidth + 'px';
+
+    const duration = 3 + Math.random() * 3; // slower, lighter fall
+    const delay = Math.random() * 3;
+    drop.style.animationDuration = duration + 's';
+    drop.style.animationDelay = delay + 's';
+
+    rainContainer.appendChild(drop);
+}
+
+
+
+
+
+// --------------------
+// Blobs & hover audio
+// --------------------
+const blobs = [...document.querySelectorAll(".blob")];
+const cards = [calcCard, memCard];
+const angryText = document.getElementById("angryText");
+const avoidBtn = document.getElementById("avoidBtn");
+const audio = new Audio("yey.mp3"); // blob jump sound
+audio.load();
+bgAudio.volume = 0.6;
+let fadeInterval;
+
+// Base positions
+const basePos = [
+    {x:180, y:140},
+    {x:260, y:235},
+    {x:370, y:360}
+];
+
+let mouseX = 0, mouseY = 0;
+document.addEventListener("mousemove", e=>{
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Initialize blob states
+blobs.forEach(b=>{
+    b.v = 0;
+    b.y = 0;
+    b.offX = 0;
+    b.offY = 0;
+    b.jump = false;
+    b.jumpTimer = 0;
+});
+
+// Hover over game cards
+cards.forEach(c=>{
+    c.addEventListener("mouseenter", ()=>{
+        if(fadeInterval) clearInterval(fadeInterval);
+
+        // Restart jump sound
+        audio.currentTime = 0;
+        audio.volume = 1;
+        audio.play().catch(()=>{});
+
+        // Blobs jump and smile
+        blobs.forEach(b=>{
+            b.jump = true;
+            b.jumpTimer = 999;
+            b.classList.add("smile");
+            b.classList.remove("angry");
+        });
+    });
+
+    c.addEventListener("mouseleave", ()=>{
+        // Fade jump sound
+        fadeInterval = setInterval(()=>{
+            audio.volume -= 0.05;
+            if(audio.volume <= 0){
+                audio.pause();
+                audio.volume = 1; // reset for next play
+                clearInterval(fadeInterval);
+            }
+        }, 50);
+
+        // Stop jump + smile
+        blobs.forEach(b=>{
+            b.jump = false;
+            b.classList.remove("smile");
+        });
+    });
+});
+
+// Avoid button hover (angry mode)
+avoidBtn.addEventListener("mouseenter", ()=>{
+    angryText.style.display = "block";
+    blobs.forEach(b=>{
+        b.classList.add("angry");
+        b.classList.remove("smile", "glow");
+    });
+});
+avoidBtn.addEventListener("mouseleave", ()=>{
+    angryText.style.display = "none";
+    blobs.forEach(b=>b.classList.remove("angry"));
+});
+
+// --------------------
+// Animation loop
+// --------------------
+function animate(){
+    const t = performance.now()/1000;
+
+    blobs.forEach((b,i)=>{
+        // Jumping logic
+        if(b.jump){
+            b.jumpTimer++;
+            if(b.jumpTimer > 36 && b.y >= 0){
+                b.v = -8 - Math.random()*2;
+                b.jumpTimer = 0;
+            }
+        } else b.jumpTimer = 0;
+
+        // Gravity
+        b.v += 0.4;
+        b.y += b.v;
+
+        // Bounce
+        if(b.y > 0){
+            b.y = 0;
+            b.v *= -0.5;
+        }
+
+        // Idle settle
+        if(!b.jump){
+            b.v *= 0.8;
+            b.y *= 0.8;
+        }
+
+        // Mouse avoidance
+        const rect = b.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = cx - mouseX;
+        const dy = cy - mouseY;
+        const dist = Math.hypot(dx,dy);
+
+        if(dist < 100){
+            const s = (100 - dist)/100;
+            b.offX += (dx/dist)*s*4;
+            b.offY += (dy/dist)*s*2;
+        } else {
+            b.offX *= 0.9;
+            b.offY *= 0.9;
+        }
+
+        // Wiggle & shake
+        const rot = Math.sin(t*6+i)*2;
+        let scaleX = 0.95, scaleY = 1.15;
+        let shakeX = 0, shakeY = 0;
+
+        if(b.classList.contains("angry")){
+            shakeX = Math.sin(t*30+i)*3;
+            shakeY = Math.sin(t*40+i)*2;
+            scaleX = scaleY = 1;
+        }
+
+        b.style.transform =
+            `translate(${basePos[i].x + b.offX + shakeX}px,
+                       ${basePos[i].y + b.y + b.offY + shakeY}px)
+             scale(${scaleX},${scaleY})
+             rotate(${rot}deg)`;
+
+        // Eye tracking
+        const dxE = mouseX - cx;
+        const dyE = mouseY - cy;
+        const distE = Math.hypot(dxE,dyE) || 1;
+        const offset = 6;
+
+        b.querySelectorAll("circle").forEach(e=>{
+            const tx = 12 + dxE/distE*offset;
+            const ty = 12 + dyE/distE*offset;
+            const cxNow = e.cx.baseVal.value;
+            const cyNow = e.cy.baseVal.value;
+            e.setAttribute("cx", cxNow + (tx - cxNow)*0.1);
+            e.setAttribute("cy", cyNow + (ty - cyNow)*0.1);
+        });
+    });
+
+    // Animate WHY text
+    if(angryText.style.display === "block"){
+        angryText.style.transform =
+            `translateX(-50%) scale(${1+0.05*Math.sin(t*8)})
+             rotate(${Math.sin(t*10)*3}deg)`;
+    }
+	
+	//leave
+	const avoidBtn = document.getElementById("avoidBtn");
+const blockedScreen = document.getElementById("blockedScreen");
+
+avoidBtn.addEventListener("click", () => {
+  blockedScreen.style.display = "flex";
+});
+
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+
+
+
+
+
+</body>
+</html>

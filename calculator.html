@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Welcome to Calculator</title>
+    
+    <style>
+       
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #A34CBB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .calculator-container {
+            width: 100%;
+            max-width: 32rem;
+            background-color: blue;
+            padding: 2rem;
+            border-radius: 1.9rem;
+            border: 10px solid #60a5fa;
+        }
+        
+        .header {
+            font-size: 2.25rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #CC6CE7;
+        }
+
+        #display {
+            width: 92%;
+			margin: 0 auto 1.5 rem auto;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            text-align: right;
+            border-radius: 0.70rem;
+            background-color: #d1fae5; 
+            border: 4px solid #34d399;
+            color: #1f2937;
+            overflow: hidden;
+            outline: none;
+            
+            font-size: 5rem; 
+            height: 120px;
+        }
+
+       
+        #calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 19px;
+        }
+
+        .calc-btn {
+            padding: 20px 0;
+            font-size: 2rem;
+            font-weight: 700;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.1s ease-in-out;
+            border: 5px solid transparent;
+            cursor: pointer;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .col-span-2 {
+            grid-column: span 2 / span 2;
+        }
+
+        .col-span-3 {
+            grid-column: span 3 / span 3;
+        }
+
+        
+        .btn-red { background-color: #ef4444; color: white; }
+        .btn-red:hover { background-color: #dc2626; }
+
+        .btn-yellow { background-color: #facc15; color: #1f2937; }
+        .btn-yellow:hover { background-color: #eab308; }
+
+        .btn-gray { background-color: #e5e7eb; color: #1f2937; }
+        .btn-gray:hover { background-color: #d1d5db; }
+        
+        .btn-decimal { background-color: #d1d5db; color: #1f2937; }
+        .btn-decimal:hover { background-color: #9ca3af; }
+
+        .btn-green { background-color: #10b981; color: white; }
+        .btn-green:hover { background-color: #059669; }
+
+    </style>
+	
+</head>
+<body>
+
+    <div class="calculator-container">
+        
+        <h1 class="header">
+            CALCULATOR
+        </h1>
+
+        <input type="text" id="display" disabled value="0">
+
+        <div id="calculator-grid">
+            
+            <button class="calc-btn btn-red col-span-2" onclick="clearDisplay()">Clear</button>
+            <button class="calc-btn btn-yellow" onclick="setOperator('/')"><span>&divide;</span></button>
+            <button class="calc-btn btn-yellow" onclick="setOperator('*')"><span>&times;</span></button>
+            
+            <button class="calc-btn btn-gray" onclick="appendNumber(7)"><span>7</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(8)"><span>8</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(9)"><span>9</span></button>
+            <button class="calc-btn btn-yellow" onclick="setOperator('-')"><span>-</span></button>
+
+            <button class="calc-btn btn-gray" onclick="appendNumber(4)"><span>4</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(5)"><span>5</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(6)"><span>6</span></button>
+            <button class="calc-btn btn-yellow" onclick="setOperator('+')"><span>+</span></button>
+
+            <button class="calc-btn btn-gray" onclick="appendNumber(1)"><span>1</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(2)"><span>2</span></button>
+            <button class="calc-btn btn-gray" onclick="appendNumber(3)"><span>3</span></button>
+            <button class="calc-btn btn-decimal" onclick="appendDecimal()"><span>.</span></button>
+
+            <button class="calc-btn btn-gray col-span-3" onclick="appendNumber(0)"><span>0</span></button>
+            <button class="calc-btn btn-green" onclick="calculateResult()"><span>=</span></button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let storedValue = null;
+        let operator = null;
+        let expectingNewNumber = false;
+        const display = document.getElementById('display');
+
+        function updateDisplay() {
+            const displayString = String(currentInput);
+            display.value = displayString.length > 10 ? 
+                            parseFloat(currentInput).toPrecision(8) : 
+                            displayString;
+        }
+
+        function appendNumber(number) {
+            if (display.value === 'Error') {
+                clearDisplay(); 
+            }
+
+            if (expectingNewNumber) {
+                currentInput = String(number);
+                expectingNewNumber = false;
+            } else if (currentInput === '0') {
+                currentInput = String(number);
+            } else {
+                currentInput += String(number);
+            }
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (currentInput === '0' || expectingNewNumber) {
+                currentInput = '0.';
+                expectingNewNumber = false;
+            } else if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+            updateDisplay();
+        }
+
+        function setOperator(op) {
+            if (storedValue === null) {
+                storedValue = parseFloat(currentInput);
+            } else if (!expectingNewNumber) {
+                calculateResult();
+            }
+            operator = op;
+            expectingNewNumber = true;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            storedValue = null;
+            operator = null;
+            expectingNewNumber = false;
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            if (storedValue === null || operator === null || expectingNewNumber) return;
+
+            let result;
+            const current = parseFloat(currentInput);
+
+            try {
+                switch (operator) {
+                    case '+':
+                        result = storedValue + current;
+                        break;
+                    case '-':
+                        result = storedValue - current;
+                        break;
+                    case '*':
+                        result = storedValue * current;
+                        break;
+                    case '/':
+                        if (current === 0) {
+                            throw new Error("Can't divide by 0!");
+                        }
+                        result = storedValue / current;
+                        break;
+                    default:
+                        return;
+                }
+
+                currentInput = String(result);
+                storedValue = null;
+                operator = null;
+                expectingNewNumber = true;
+
+            } catch (error) {
+                console.error("Calculation Error:", error.message);
+                currentInput = 'Error';
+                storedValue = null;
+                operator = null;
+                expectingNewNumber = true;
+            }
+            updateDisplay();
+        }
+
+        window.onload = updateDisplay;
+
+    </script>
+</body>
+</html>
