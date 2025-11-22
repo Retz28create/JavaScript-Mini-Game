@@ -17,10 +17,10 @@ body{
   font-family:Inter,system-ui,sans-serif;
   color:#e6eef8;
   background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('totoro.jpg');
-  background-size: cover;         /* make it cover whole screen */
-  background-position: center;    /* center it */
-  background-repeat: no-repeat;   /* no tiling */
-  background-attachment: fixed;   /* optional: stays fixed when scrolling */
+  background-size: cover;         
+  background-position: center;   
+  background-repeat: no-repeat;   
+  background-attachment: fixed;   
   overflow:hidden;
 }
 
@@ -73,12 +73,6 @@ body{
 }
 
 
-
-
-
-
-
-
 /* GAMES*/
 .games-right{
   position:fixed;right:200px;top:50%;transform:translateY(-50%);
@@ -118,9 +112,6 @@ body{
 }
 
 
-
-
-
 /* text */
 .title-container {
   text-align: center;
@@ -153,11 +144,6 @@ body{
 }
 
 
-
-
-
-
-
 /* DA BLOB */
 .blob{
   position:absolute;
@@ -176,7 +162,6 @@ body{
   border: 4px solid #23c07b; /* outline */
   border-radius: 60px 60px 15px 15px;
 
-  /* Gradient background */
   background: linear-gradient(135deg, #23c07b, #43e58f);
 
   /* Fade the bottom */
@@ -223,8 +208,6 @@ body{
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
 }
-
-
 
 
 
@@ -285,9 +268,9 @@ body{
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* So it doesn't block clicks */
+  pointer-events: none; 
   overflow: hidden;
-  z-index: 1; /* behind blobs but above background */
+  z-index: 1; 
 }
 
 .raindrop {
@@ -314,11 +297,6 @@ body{
 
 
 
-
-
-
-
-
 <body>
 <div class="page">
 
@@ -334,7 +312,7 @@ body{
   
    <div class="title-container">
   <div class="title-text">Welcome to Our JavaScript Blob Zone</div>
-  <marquee class="title-marquee">Click first & Don’t touch the blobs, they don’t like it!</marquee>
+  <marquee class="title-marquee">Click first & Don’t touch the blobs, they don’t like it!              Made by: Meia Coprade, Kurt Russel Cerzo, Cherrylyn Quebalayan </marquee>
 </div>
 
   <div class="games-right">
@@ -400,7 +378,7 @@ audioBtn.addEventListener("click", () => {
         audioBtn.textContent = "🔇 Music Off";
         musicPlaying = false;
     } else {
-        bgAudio.play().catch(()=>{}); // play on click
+        bgAudio.play().catch(()=>{}); 
         audioBtn.textContent = "🔊 Music On";
         musicPlaying = true;
     }
@@ -410,7 +388,7 @@ audioBtn.addEventListener("click", () => {
 
 //rain
 const rainContainer = document.getElementById('rain');
-const numberOfDrops = 30; // lighter rain
+const numberOfDrops = 30; 
 
 for (let i = 0; i < numberOfDrops; i++) {
     const drop = document.createElement('div');
@@ -418,7 +396,7 @@ for (let i = 0; i < numberOfDrops; i++) {
 
     drop.style.left = Math.random() * window.innerWidth + 'px';
 
-    const duration = 3 + Math.random() * 3; // slower, lighter fall
+    const duration = 3 + Math.random() * 3; 
     const delay = Math.random() * 3;
     drop.style.animationDuration = duration + 's';
     drop.style.animationDelay = delay + 's';
@@ -455,7 +433,7 @@ document.addEventListener("mousemove", e=>{
     mouseY = e.clientY;
 });
 
-// Initialize blob states
+
 blobs.forEach(b=>{
     b.v = 0;
     b.y = 0;
@@ -470,7 +448,7 @@ cards.forEach(c=>{
     c.addEventListener("mouseenter", ()=>{
         if(fadeInterval) clearInterval(fadeInterval);
 
-        // Restart jump sound
+     
         audio.currentTime = 0;
         audio.volume = 1;
         audio.play().catch(()=>{});
@@ -485,12 +463,12 @@ cards.forEach(c=>{
     });
 
     c.addEventListener("mouseleave", ()=>{
-        // Fade jump sound
+      
         fadeInterval = setInterval(()=>{
             audio.volume -= 0.05;
             if(audio.volume <= 0){
                 audio.pause();
-                audio.volume = 1; // reset for next play
+                audio.volume = 1; 
                 clearInterval(fadeInterval);
             }
         }, 50);
@@ -542,13 +520,13 @@ function animate(){
             b.v *= -0.5;
         }
 
-        // Idle settle
+        // Idle 
         if(!b.jump){
             b.v *= 0.8;
             b.y *= 0.8;
         }
 
-        // Mouse avoidance
+        //  avoid
         const rect = b.getBoundingClientRect();
         const cx = rect.left + rect.width/2;
         const cy = rect.top + rect.height/2;
@@ -598,7 +576,7 @@ function animate(){
         });
     });
 
-    // Animate WHY text
+    // WHY text
     if(angryText.style.display === "block"){
         angryText.style.transform =
             `translateX(-50%) scale(${1+0.05*Math.sin(t*8)})
@@ -619,11 +597,6 @@ avoidBtn.addEventListener("click", () => {
 
 animate();
 </script>
-
-
-
-
-
-
 </body>
 </html>
+
